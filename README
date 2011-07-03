@@ -1,0 +1,8 @@
+A ruby script to combine the pdfs from the University of Chicago website for the History of Cartography (http://press.uchicago.edu/books/HOC/index.html)
+
+Requirements you might not have:
+wget in path
+pdftk in path
+
+Gems: 
+Nokogiri
