@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'nokogiri'
+require 'fileutils'
 
 index_urls = {
   "Volume One" => "http://press.uchicago.edu/books/HOC/HOC_V1/Volume1.html",
@@ -16,14 +17,16 @@ base_urls = {
 
 
 index_urls.each do |name, url|
-  `mkdir "#{name}"`
+  q_name = "\"#{name}\""
+  FileUtils.mkdir q_name
   html_doc = Nokogiri::HTML(open(url))
   pdf_list = []
   html_doc.css('a[href$="pdf"]').map { |link|
-    system("wget -P \"#{name}\" #{ base_urls[name] + link['href'] }")
-    pdf_list.push("\"#{name}/#{link['href']}\"")
+    system("wget -P #{q_name} #{ base_urls[name] + link['href'] }")
+    pdf_list.push("#{q_name}/#{link['href']}")
   }
 
   pdf_list_str = pdf_list.join(" ")
   system("pdftk #{pdf_list_str} output '#{name}.pdf'")
+  FileUtils.rm_rf q_name
 end
