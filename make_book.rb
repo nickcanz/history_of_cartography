@@ -18,15 +18,18 @@ base_urls = {
 
 index_urls.each do |name, url|
   q_name = "\"#{name}\""
-  FileUtils.mkdir q_name
+  FileUtils.mkdir name
   html_doc = Nokogiri::HTML(open(url))
   pdf_list = []
   html_doc.css('a[href$="pdf"]').map { |link|
-    system("wget -P #{q_name} #{ base_urls[name] + link['href'] }")
-    pdf_list.push("#{q_name}/#{link['href']}")
+    if link['href'] != "HOC_VOLUME2_Book2_genindex.pdf" then
+
+      system("wget -P #{q_name} #{ base_urls[name] + link['href'] }") unless File.exists?("#{q_name}/#{link['href']}")
+      pdf_list.push("#{q_name}/#{link['href']}")
+
+    end
   }
 
   pdf_list_str = pdf_list.join(" ")
   system("pdftk #{pdf_list_str} output '#{name}.pdf'")
-  FileUtils.rm_rf q_name
 end
